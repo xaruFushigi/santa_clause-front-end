@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  color: #f2f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Ubuntu, sans-serif;
 }
 
 .App-logo {
@@ -35,4 +38,29 @@
   to {
     transform: rotate(360deg);
   }
+}
+body {
+  background-color: #be2251;
+}
+
+input {
+  font-size: 14px;
+  line-height: 20px;
+  padding: 8px 8px;
+  width: 100%;
+  min-height: 30px;
+  border: unset;
+  border-color: white;
+  border-radius: 5px;
+  outline-color: rgba(12, 13, 16, 0.5);
+  background-color: rgb(255, 255, 255);
+}
+
+.btn-close {
+  cursor: pointer;
+  border: 1px solid #999;
+  border-radius: 25%;
+  position: fixed;
+  right: calc(25% - 10px);
+  top: 23%;
 }

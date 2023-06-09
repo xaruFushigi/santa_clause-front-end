@@ -11,7 +11,7 @@ import {
 const Body = (props) => {
   const [giftInputValue, setgiftInputValue] = useState("");
   const [errorMessageForMaxLength, setErrorMessageForMaxLength] = useState(
-    <span className="gray">Max Allowed characters: 100</span>
+    <span className="black">Max Allowed characters: 100</span>
   );
   const [toggleUserSignInPopUpWindow, setToggleUserSignInPopUpWindow] =
     useState(true);
@@ -57,7 +57,6 @@ const Body = (props) => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setCsrfToken(data.csrfToken);
       } else {
         throw new Error("Failed to fetch CSRF token");
@@ -87,15 +86,16 @@ const Body = (props) => {
           username: usernameInputFieldValue,
           uid: uidInputFieldValue,
           giftMessage: giftInputValue,
-          email: "animeko4u@gmail.com",
+          email: "something@gmail.com",
         }),
         credentials: "include",
         mode: "cors",
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         window.location.href = "http://localhost:3000/giftLetterSent";
+      } else {
+        window.location.href = "http://localhost:3000/giftLetterNotSent";
       }
     } catch (error) {
       console.log(error);
@@ -109,15 +109,13 @@ const Body = (props) => {
   return toggleUserSignInPopUpWindow ? (
     <UserSignInPopUpWindow
       togglePopUpWindow={togglePopUpWindow}
-      //   usernameInputFieldValue={props.usernameInputFieldValue}
-      //   uidInputFieldValue={props.uidInputFieldValue}
       onUsernameInputChange={onUsernameInputChange}
       onUidInputChange={onUidInputChange}
     />
   ) : (
     <div>
       {/* name input */}
-      <div className="flex flex-column justify-start w-20 ml4">
+      <div className="flex flex-column justify-start w-20 ml4 b">
         <label htmlFor="nameInputField" className="flex justify-start">
           who are you?
         </label>
@@ -130,7 +128,7 @@ const Body = (props) => {
       </div>
 
       {/* gift input */}
-      <div className="flex flex-column justify-start w-20 ml4 mt3">
+      <div className="flex flex-column justify-start w-20 ml4 mt3 b">
         <label htmlFor="giftInputField" className="flex justify-start">
           what do you want for christmas?
         </label>
@@ -145,7 +143,7 @@ const Body = (props) => {
         />
         {/* if character length over 100 */}
         {errorMessageForMaxLength && (
-          <span className="red error" htmlFor="giftInputField">
+          <span className="black" htmlFor="giftInputField">
             {errorMessageForMaxLength}
           </span>
         )}
@@ -153,7 +151,7 @@ const Body = (props) => {
 
       {/* send button */}
       <div className="flex justify-end ml4 w-20 mt3">
-        <button className="" onClick={sendGiftLetterButton}>
+        <button className="b red" onClick={sendGiftLetterButton}>
           Send
         </button>
       </div>
