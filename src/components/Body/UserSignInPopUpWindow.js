@@ -51,19 +51,12 @@ const UserSignInPopUpWindow = (props) => {
   return (
     <div>
       <div className="popup-content flex items-center">
-        {/* Exit Body */}
-        <div>
-          <button className="btn-close" onClick={props.togglePopUpWindow}>
-            {" "}
-            X{" "}
-          </button>
-        </div>
         {/* Main Body */}
         <div className="box w-50">
           <h2 className="flex justify-start">Enter Your Log In Credentials</h2>
 
           <div className="flex justify-start flex-column">
-            <label htmlFor="userNameInput" className="flex flex-start">
+            <label htmlFor="userNameInput" className="flex flex-start b">
               Name
             </label>
             <input
@@ -77,7 +70,7 @@ const UserSignInPopUpWindow = (props) => {
           </div>
 
           <div className="flex justify-start flex-column">
-            <label htmlFor="userIdInput" className="flex justify-start mt3">
+            <label htmlFor="userIdInput" className="flex justify-start mt3 b">
               User Id
             </label>
             <input
@@ -89,9 +82,11 @@ const UserSignInPopUpWindow = (props) => {
               onChange={props.onUidInputChange}
             />
           </div>
-          <p>csrfToken: {csrfToken}</p>
           <div className="flex flex-row w-30">
-            <button className="mt3 mr2" onClick={fetchFromDatabaseUserData}>
+            <button
+              className="mt3 mr2 red b"
+              onClick={fetchFromDatabaseUserData}
+            >
               Sign In
             </button>
           </div>
