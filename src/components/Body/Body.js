@@ -1,50 +1,34 @@
-// React related imports
 import React, { useState, useEffect, useContext } from "react";
-import PropTypes from "prop-types";
-// JS related imports
 import UserSignInPopUpWindow from "./UserSignInPopUpWindow";
-import {
-  myContext,
-  uidInputFieldValue,
-  usernameInputFieldValue,
-} from "../../Context";
+import { myContext } from "../../Context";
+
 const Body = (props) => {
-  const [giftInputValue, setgiftInputValue] = useState("");
+  const [giftInputValue, setGiftInputValue] = useState("");
   const [errorMessageForMaxLength, setErrorMessageForMaxLength] = useState(
-    <span className="black">Max Allowed characters: 100</span>
+    <span className="white">Max Allowed characters: 100</span>
   );
-  const [toggleUserSignInPopUpWindow, setToggleUserSignInPopUpWindow] =
-    useState(true);
-  const [
+  const {
     usernameInputFieldValue,
     uidInputFieldValue,
-    setUsernameInputFieldValue,
-    setUidInputFieldValue,
     csrfToken,
     setCsrfToken,
-  ] = useContext(myContext);
+    toggleUserSignInPopUpWindow,
+    togglePopUpWindow,
+  } = useContext(myContext);
+  // Retrieve authentication status from session storage
+  const isAuthenticated = sessionStorage.getItem("authenticated") === "true";
 
-  //-------- INPUT related functions ------------//
-  const onUsernameInputChange = (event) => {
-    setUsernameInputFieldValue(event.target.value);
-  };
-  const onUidInputChange = (event) => {
-    setUidInputFieldValue(event.target.value);
-  };
   // Gift letter length checker function
   const checkLengthOfInput = (event) => {
     const { value } = event.target;
-    // checks input length
     if (value.length > 9) {
       setErrorMessageForMaxLength("Over 100 allowed characters");
     } else {
-      setgiftInputValue(value);
+      setGiftInputValue(value);
       setErrorMessageForMaxLength("");
     }
   };
-  //------END OF INPUT related functions ---------//
 
-  //-- --//
   const fetchCsrf = async () => {
     try {
       const response = await fetch("http://localhost:3050/csrf-token", {
@@ -52,6 +36,7 @@ const Body = (props) => {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken,
         },
         mode: "cors",
       });
@@ -69,12 +54,14 @@ const Body = (props) => {
   useEffect(() => {
     fetchCsrf();
   }, []);
-  //-- --//
 
-  //-------- Button related functions ------------//
-  // Gift letter send button
   const sendGiftLetterButton = async (event) => {
     event.preventDefault();
+    if (!usernameInputFieldValue || !uidInputFieldValue) {
+      console.log("Please sign in first");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3050/sendGift", {
         method: "POST",
@@ -91,8 +78,8 @@ const Body = (props) => {
         credentials: "include",
         mode: "cors",
       });
+
       if (response.ok) {
-        const data = await response.json();
         window.location.href = "http://localhost:3000/giftLetterSent";
       } else {
         window.location.href = "http://localhost:3000/giftLetterNotSent";
@@ -101,60 +88,83 @@ const Body = (props) => {
       console.log(error);
     }
   };
-  // toggle PopUp Window
-  const togglePopUpWindow = () => {
-    setToggleUserSignInPopUpWindow((prevCondition) => !prevCondition);
+  // Logout button
+  const logoutButton = async () => {
+    const response = await fetch("http://localhost:3050/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
+      },
+      body: JSON.stringify({}),
+      credentials: "include",
+      mode: "cors",
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setCsrfToken(data.csrfToken); // Update the CSRF token
+      sessionStorage.removeItem("authenticated"); //remove authneticatio nfrom session storage
+      fetchCsrf(); // create new csrfToken after logging out
+      togglePopUpWindow();
+    }
   };
   //------END OF Button related functions ---------//
   return toggleUserSignInPopUpWindow ? (
-    <UserSignInPopUpWindow
-      togglePopUpWindow={togglePopUpWindow}
-      onUsernameInputChange={onUsernameInputChange}
-      onUidInputChange={onUidInputChange}
-    />
+    <UserSignInPopUpWindow />
   ) : (
     <div>
-      {/* name input */}
-      <div className="flex flex-column justify-start w-20 ml4 b">
-        <label htmlFor="nameInputField" className="flex justify-start">
-          who are you?
-        </label>
-        <input
-          name="nameInputField"
-          type="text"
-          placeholder="input registered name"
-          className="br1"
-        />
-      </div>
+      {isAuthenticated && (
+        <div>
+          {/* name input */}
+          <div className="flex flex-column justify-start w-20 ml4 b">
+            <label htmlFor="nameInputField" className="flex justify-start">
+              who are you?
+            </label>
+            <input
+              name="nameInputField"
+              type="text"
+              placeholder="input registered name"
+              className="br1"
+            />
+          </div>
 
-      {/* gift input */}
-      <div className="flex flex-column justify-start w-20 ml4 mt3 b">
-        <label htmlFor="giftInputField" className="flex justify-start">
-          what do you want for christmas?
-        </label>
-        <textarea
-          name="giftInputField"
-          rows="10"
-          cols="45"
-          maxLength={10}
-          placeholder="Gifts!"
-          onChange={checkLengthOfInput}
-          defaultValue={giftInputValue}
-        />
-        {/* if character length over 100 */}
-        {errorMessageForMaxLength && (
-          <span className="black" htmlFor="giftInputField">
-            {errorMessageForMaxLength}
-          </span>
-        )}
-      </div>
+          {/* gift input */}
+          <div className="flex flex-column justify-start w-20 ml4 mt3 b">
+            <label htmlFor="giftInputField" className="flex justify-start">
+              what do you want for christmas?
+            </label>
+            <textarea
+              name="giftInputField"
+              rows="10"
+              cols="45"
+              maxLength={10}
+              placeholder="Gifts!"
+              onChange={checkLengthOfInput}
+              defaultValue={giftInputValue}
+            />
+            {/* if character length over 100 */}
+            {errorMessageForMaxLength && (
+              <span className="white" htmlFor="giftInputField">
+                {errorMessageForMaxLength}
+              </span>
+            )}
+          </div>
 
-      {/* send button */}
-      <div className="flex justify-end ml4 w-20 mt3">
-        <button className="b red" onClick={sendGiftLetterButton}>
-          Send
-        </button>
-      </div>
+          {/* send button */}
+          <div className="flex justify-end ml4 w-20 mt3">
+            <button className="b red w-25 br2" onClick={sendGiftLetterButton}>
+              Send
+            </button>
+          </div>
+
+          {/* Logout button */}
+          <div className="flex justify-end ml4 w-20 mt3">
+            <button className="b red w-25 br2" onClick={logoutButton}>
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

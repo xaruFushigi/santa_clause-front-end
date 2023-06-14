@@ -1,23 +1,30 @@
-import React, { useContext } from "react";
-import PropTypes from "prop-types";
+import React, { useContext, useEffect } from "react";
 // CSS import
 import "./UserSignInPopUpWindow.css";
-import {
-  myContext,
-  uidInputFieldValue,
-  usernameInputFieldValue,
-} from "../../Context";
+import { myContext } from "../../Context";
+
 const UserSignInPopUpWindow = (props) => {
   // Context variables
-  const [
+  const {
     usernameInputFieldValue,
     uidInputFieldValue,
-    setUsernameInputFieldValue,
-    setUidInputFieldValue,
-    csrfToken, // Retrieve the CSRF token from the context
-    setCsrfToken,
-  ] = useContext(myContext);
-  //
+    csrfToken,
+    setAuthenticated,
+    togglePopUpWindow,
+    onUsernameInputChange,
+    onUidInputChange,
+  } = useContext(myContext);
+
+  useEffect(() => {
+    // Check authentication status on component mount
+    const isAuthenticated = sessionStorage.getItem("authenticated") === "true";
+    if (isAuthenticated) {
+      // Update the authenticated state in the context
+      setAuthenticated(true);
+      togglePopUpWindow();
+    }
+  }, [togglePopUpWindow, setAuthenticated]);
+
   const fetchFromDatabaseUserData = async (event) => {
     event.preventDefault();
     if (!usernameInputFieldValue || !uidInputFieldValue) {
@@ -38,16 +45,24 @@ const UserSignInPopUpWindow = (props) => {
         credentials: "include",
         mode: "cors",
       });
+
       if (response.ok) {
         const data = await response.json();
-        data ? props.togglePopUpWindow() : console.log("soemthign wrong");
+        if (data) {
+          // Update the authenticated state in the context
+          setAuthenticated(true);
+          // Save authentication status in session storage
+          sessionStorage.setItem("authenticated", "true");
+          togglePopUpWindow();
+        }
       } else {
-        throw new Error("failed to fetch user data");
+        throw new Error("Failed to fetch user data");
       }
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div>
       <div className="popup-content flex items-center">
@@ -65,7 +80,7 @@ const UserSignInPopUpWindow = (props) => {
               className="w-40"
               placeholder="user name"
               defaultValue={usernameInputFieldValue}
-              onChange={props.onUsernameInputChange}
+              onChange={onUsernameInputChange}
             />
           </div>
 
@@ -79,7 +94,7 @@ const UserSignInPopUpWindow = (props) => {
               className="w-40"
               placeholder="user id"
               defaultValue={uidInputFieldValue}
-              onChange={props.onUidInputChange}
+              onChange={onUidInputChange}
             />
           </div>
           <div className="flex flex-row w-30">
@@ -94,12 +109,6 @@ const UserSignInPopUpWindow = (props) => {
       </div>
     </div>
   );
-};
-
-UserSignInPopUpWindow.propTypes = {
-  togglePopUpWindow: PropTypes.func.isRequired,
-  onUsernameInputChange: PropTypes.func.isRequired,
-  onUsernameInputChange: PropTypes.func.isRequired,
 };
 
 export default UserSignInPopUpWindow;

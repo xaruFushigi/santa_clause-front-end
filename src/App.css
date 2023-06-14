@@ -1,46 +1,12 @@
 .App {
   text-align: center;
-  color: #f2f0f0;
+  color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
     Helvetica Neue, Ubuntu, sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 body {
-  background-color: #be2251;
+  background-color: #1e1e1e;
 }
 
 input {
@@ -50,15 +16,13 @@ input {
   width: 100%;
   min-height: 30px;
   border: unset;
-  border-color: white;
-  border-radius: 5px;
   outline-color: rgba(12, 13, 16, 0.5);
-  background-color: rgb(255, 255, 255);
+  background-color: #ffffff;
 }
 
 .btn-close {
   cursor: pointer;
-  border: 1px solid #999;
+  border: 1px solid #ffffff;
   border-radius: 25%;
   position: fixed;
   right: calc(25% - 10px);

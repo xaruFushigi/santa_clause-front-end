@@ -1,25 +1,47 @@
 import React, { createContext, useState } from "react";
-export const myContext = createContext([]);
+
+export const myContext = createContext();
 
 const Context = (props) => {
   const [usernameInputFieldValue, setUsernameInputFieldValue] = useState("");
   const [uidInputFieldValue, setUidInputFieldValue] = useState("");
-  const [csrfToken, setCsrfToken] = useState(""); // State to store the CSRF token
+  const [csrfToken, setCsrfToken] = useState("");
+  const [authenticated, setAuthenticated] = useState(true);
+  const [toggleUserSignInPopUpWindow, setToggleUserSignInPopUpWindow] =
+    useState(true);
 
-  const contextValues = [
+  // toggle PopUp Window
+  const togglePopUpWindow = () => {
+    setToggleUserSignInPopUpWindow((prevCondition) => !prevCondition);
+  };
+  //-------- INPUT related functions ------------//
+  const onUsernameInputChange = (event) => {
+    setUsernameInputFieldValue(event.target.value);
+  };
+  const onUidInputChange = (event) => {
+    setUidInputFieldValue(event.target.value);
+  };
+
+  const contextValues = {
     usernameInputFieldValue,
-    uidInputFieldValue,
     setUsernameInputFieldValue,
+    uidInputFieldValue,
     setUidInputFieldValue,
     csrfToken,
     setCsrfToken,
-  ];
+    authenticated,
+    setAuthenticated,
+    toggleUserSignInPopUpWindow,
+    setToggleUserSignInPopUpWindow,
+    togglePopUpWindow,
+    onUsernameInputChange,
+    onUidInputChange,
+  };
+
   return (
-    <div>
-      <myContext.Provider value={contextValues}>
-        {props.children}
-      </myContext.Provider>
-    </div>
+    <myContext.Provider value={contextValues}>
+      {props.children}
+    </myContext.Provider>
   );
 };
 
